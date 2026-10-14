@@ -1,0 +1,84 @@
+# Settings for the LinkedIn AgTech autopilot. Every rule the drafts and checks follow lives here,
+# so the code stays generic: change this file, not the code, to point the pipeline at another sector or person.
+
+[profile]
+name = "Jeremiah Fleming"
+content_id_prefix = "AG"           # draft ids look like AG-0001
+
+[positioning]
+audience = """VPs, directors, founders and recruiters at AgTech and ag companies. They scroll LinkedIn between meetings and
+stop for a sharp, practical take on their sector's business: adoption, unit economics, go-to-market, teams and operations."""
+voice = """Plain, practical and curious. Someone who reads the AgTech news and asks 'would this work on a real operation?'
+Short sentences, everyday words, no buzzwords. Confident opinions held loosely; respectful of farmers, ranchers and
+founders alike. First person ('I').
+NO INVENTED BACKGROUND: only state jobs, years, places or numbers listed in [facts].approved."""
+target_roles = ["management roles in AgTech operations"]
+pillars = [
+  "the news, read like a manager: one AgTech story and the business question behind it (adoption, cost per head or acre, go-to-market, who pays)",
+  "adoption reality: why farmers and ranchers buy, use or quit a tool, and what a company has to get right in the field",
+  "livestock and ranch tech: sensors, virtual fencing, herd data, drones, water and grazing tools, judged by whether they pay",
+  "leading in ag: running crews, operations and customers when weather, markets and labor don't cooperate",
+]
+
+[facts]
+# The only personal facts the drafting model may use. Empty means: write from the news and from questions only.
+approved = []
+
+[privacy]
+# Words that must never appear in a post (other accounts, family names, client names). Checked before posting.
+private_terms = []
+
+[linkedin]
+# AUTOPOST SWITCH. false = only drafts a person approved can post. true = drafts that pass every check can post
+# without a per-post OK. Either way, nothing posts without --confirm (and, in the cloud, LINKEDIN_LIVE = true).
+autopost = false
+posts_per_week = 3                 # LinkedIn rewards consistency over volume; 3 a week to start
+post_days = ["Tue", "Wed", "Thu"]  # strongest weekday mornings for B2B feeds
+post_time_local = "08:10"
+timezone = "America/Chicago"
+link_in_first_comment = true       # posts with outside links in the body get less reach; the source link goes in comment 1
+api_version = "202605"             # LinkedIn-Version header (YYYYMM). Versions retire after about a year; bump when told.
+max_drafts_in_queue = 9
+
+[post_rules]
+# Checked by autopilot/core.py before anything can be approved or posted.
+min_chars = 600
+max_chars = 1800                   # sweet spot is about 900-1500 characters
+hook_max_chars = 140               # the first line must land before LinkedIn's "...see more" cut (about 210 chars on desktop)
+hashtags_min = 3
+hashtags_max = 5
+banned_phrases = ["game-changer", "game changer", "revolutionize", "revolutionizing", "synergy", "leverage",
+                  "delve", "in today's fast-paced", "I'm thrilled to announce", "humbled", "Agree?",
+                  "comment YES", "like if you agree", "tag someone"]
+rules = [
+  "LINE 1 IS THE HOOK: one short line that plants exactly one question (a surprising number from the story, a stance, or a question a rancher would ask). No 'I'm excited to share'.",
+  "ONE STORY, ONE TAKE: each post covers one news item and gives the author's practical take on it. Name the company or source in plain words; the link goes in the first comment.",
+  "BEAT BEFORE THE REVEAL: before giving the take, give the reader the likely guess or the open question, then confirm or flip it with something true from the story.",
+  "SHORT LINES: 1-2 sentence paragraphs with a blank line between them; at most one short list of 3-4 items.",
+  "FACTS ONLY: every number, name and claim comes from the source article or from [facts].approved. Never invent experience, employers, results or quotes.",
+  "END WITH ONE REAL QUESTION that people in ag or AgTech can answer from their own experience (not yes/no, not engagement bait). That's the only CTA; never ask for likes, follows or reposts.",
+  "THINK LIKE A MANAGER: the take names the business decision in the story (who pays, what it costs, what has to be true for adoption, what the team needs) and what he would watch or do. Never claim a title, team size or result he hasn't given us.",
+  "JOB SEARCH, LIGHTLY: at most one post in four mentions the job search, and only as what he's learning or looking for, never as a plea.",
+  "RESPECT: disagree with ideas, never people or companies by name in a negative way; no outrage bait; no politics beyond what the story itself is about.",
+  "3-5 HASHTAGS at the very end, on topic (#AgTech plus the story's subject, e.g. #PrecisionAg #Livestock).",
+]
+
+[sources]
+# AgTech news RSS feeds. The fetcher skips any that fail and dedupes stories across feeds.
+feeds = [
+  { name = "AgFunderNews", url = "https://agfundernews.com/feed" },
+  { name = "Future Farming", url = "https://www.futurefarming.com/feed/" },
+  { name = "PrecisionAg", url = "https://www.precisionag.com/feed/" },
+  { name = "Successful Farming", url = "https://www.agriculture.com/rss/news" },
+  { name = "Agri-Pulse", url = "https://www.agri-pulse.com/rss/articles" },
+  { name = "The Spoon", url = "https://thespoon.tech/feed/" },
+]
+max_age_days = 10
+# Stories mentioning these score higher (pillars 1-3). Matching is case-insensitive.
+keywords = ["agtech", "ag tech", "precision", "drone", "sensor", "autonomous", "robot", "ai ", "data", "livestock",
+            "cattle", "ranch", "grazing", "virtual fenc", "water", "irrigation", "satellite", "startup", "funding",
+            "acquisition", "hiring", "layoff", "john deere", "farm software", "connectivity", "broadband"]
+skip_keywords = ["obituary", "recipe", "election", "sponsored"]
+
+[models]
+posts = "claude-opus-5-5"          # used only by the optional draft step

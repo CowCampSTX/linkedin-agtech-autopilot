@@ -1,0 +1,71 @@
+# Runs daily on GitHub's servers (free at this size). It fetches AgTech news, adds drafts if the queue is low
+# (only when an Anthropic key is set), and posts at most one draft on posting days. Two switches must both be on
+# before anything posts:
+#   1. repository variable LINKEDIN_LIVE = true   (Settings > Secrets and variables > Actions > Variables)
+#   2. a draft marked approved in data/queue.json, or [linkedin].autopost = true in config.toml
+# Secrets (Settings > Secrets and variables > Actions > Secrets), from `python -m autopilot.connect`:
+#   LINKEDIN_ACCESS_TOKEN, LINKEDIN_PERSON_URN; optional ANTHROPIC_API_KEY.
+# Variable LINKEDIN_TOKEN_EXPIRES (YYYY-MM-DD) makes the job warn a week before the 60-day token runs out.
+name: LinkedIn autopilot
+
+on:
+  schedule:
+    - cron: "15 14 * * *"     # 9:15 a.m. Central in summer, 8:15 a.m. in winter
+  workflow_dispatch:
+
+permissions:
+  contents: write              # to save the queue (posted status and post links) back to the repo
+
+concurrency:
+  group: linkedin-autopilot
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m unittest discover -s tests -v
+
+  run:
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      HAS_KEY: ${{ secrets.ANTHROPIC_API_KEY != '' }}
+      HAS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install drafting libraries
+        if: env.HAS_KEY == 'true'
+        run: pip install -q -r requirements-draft.txt
+      - name: Check the LinkedIn login (posts nothing)
+        if: env.HAS_TOKEN == 'true'
+        env:
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          LINKEDIN_PERSON_URN: ${{ secrets.LINKEDIN_PERSON_URN }}
+        run: python -m autopilot.cli whoami
+      - name: Fetch news, top up drafts, post if due
+        env:
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          LINKEDIN_PERSON_URN: ${{ secrets.LINKEDIN_PERSON_URN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          LINKEDIN_TOKEN_EXPIRES: ${{ vars.LINKEDIN_TOKEN_EXPIRES }}
+        run: |
+          if [ "${{ vars.LINKEDIN_LIVE }}" = "true" ]; then
+            python -m autopilot.cli run --confirm
+          else
+            python -m autopilot.cli run
+          fi
+      - name: Save the queue
+        run: |
+          git config user.name "autopilot bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/queue.json
+          git diff --cached --quiet || (git commit -m "Queue update [skip ci]" && git push)

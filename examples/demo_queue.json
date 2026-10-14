@@ -1,0 +1,28 @@
+[
+  {
+    "id": "AG-0001",
+    "status": "approved",
+    "created_at": "2026-10-13T14:15:00+00:00",
+    "text": "Would you trust a fence you can't see with 400 head of cattle?\n\nA virtual fencing company just raised new money to put GPS collars on more herds.\n\nMost people's first guess is that the hard part is the tech.\n\nThe story says otherwise: the collars work, and the slow part is getting ranchers to change how they move cattle.\n\nThat matches what I hear from people who run cattle. A tool has to save a day of work in the first month, or it ends up in the barn.\n\nThree things I'd want to know before buying in:\n- What happens when the signal drops in a draw\n- Who fixes a collar at 5 a.m.\n- What it costs per head per year, all in\n\nIf you've run virtual fencing on a real operation, what surprised you most in the first season?\n\n#AgTech #Livestock #VirtualFencing #Ranching",
+    "first_comment": "Source: Example AgTech News, \"Virtual fencing startup raises new round\"\nhttps://example.com/virtual-fencing",
+    "source": {
+      "title": "Virtual fencing startup raises new round (demo story)",
+      "url": "https://example.com/virtual-fencing",
+      "feed": "Example AgTech News"
+    },
+    "issues": []
+  },
+  {
+    "id": "AG-0002",
+    "status": "pending",
+    "created_at": "2026-10-13T14:15:00+00:00",
+    "text": "Excited to share this game-changer for the farm! https://example.com/story\nRobots are coming to every barn. #AgTech",
+    "first_comment": "",
+    "source": {
+      "title": "Barn robots (demo story)",
+      "url": "https://example.com/barn-robots",
+      "feed": "Example AgTech News"
+    },
+    "issues": []
+  }
+]

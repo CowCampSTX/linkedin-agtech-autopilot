@@ -1,0 +1,6 @@
+.env
+__pycache__/
+*.pyc
+data/news.json
+data/review.md
+data/*.tmp
