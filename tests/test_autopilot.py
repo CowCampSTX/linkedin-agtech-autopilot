@@ -23,7 +23,7 @@ Most people's first guess is that the hard part is the tech.
 
 The story says otherwise: the collars work, and the slow part is getting ranchers to change how they move cattle.
 
-That matches what I hear from people who run cattle. A tool has to save a day of work in the first month, or it ends up in the barn.
+That matches what I see working cattle. A tool has to save a day of work in the first month, or it ends up in the barn.
 
 Three things I'd want to know before buying in:
 - What happens when the signal drops in a draw
@@ -53,6 +53,10 @@ class CheckPostTests(unittest.TestCase):
         issues = li.check_post(GOOD.replace("A tool has", "A game-changer tool from Acme Ranch has"), CFG)
         self.assertTrue(any("banned" in i for i in issues))
         self.assertTrue(any("private" in i for i in issues))
+
+    def test_job_seeking_language_blocked(self):
+        issues = li.check_post(GOOD.replace("A tool has", "I'm open to work in AgTech. A tool has"), CFG)
+        self.assertIn("banned phrase: 'open to work'", issues)
 
     def test_long_hook(self):
         self.assertTrue(any("hook" in i for i in li.check_post("x" * 200 + "\n" + GOOD, CFG)))

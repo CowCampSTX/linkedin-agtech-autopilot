@@ -77,7 +77,7 @@ autopilot/
 config.toml    every rule and setting
 data/queue.json            the live queue (starts empty)
 examples/demo_queue.json   two demo drafts used in the screenshot
-tests/         16 unit tests, LinkedIn's API replaced by a fake
+tests/         17 unit tests, LinkedIn's API replaced by a fake
 .github/workflows/autopilot.yml   the daily cloud job (tests, then run)
 ```
 
@@ -86,7 +86,7 @@ tests/         16 unit tests, LinkedIn's API replaced by a fake
 Requires Python 3.11 or newer.
 
 ```bash
-python -m unittest discover -s tests                       # 16 tests, no network
+python -m unittest discover -s tests                       # 17 tests, no network
 python -m autopilot.cli --queue examples/demo_queue.json list
 python -m autopilot.cli --queue examples/demo_queue.json post --id AG-0001   # dry run, posts nothing
 python -m autopilot.cli fetch                               # live news, posts nothing
